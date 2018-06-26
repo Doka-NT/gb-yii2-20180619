@@ -6,6 +6,7 @@ return [
     'username' => 'foo',
     'password' => 'foo',
     'charset' => 'utf8',
+//	'tablePrefix' => 'foo_',
 
     // Schema cache options (for production environment)
     //'enableSchemaCache' => true,
