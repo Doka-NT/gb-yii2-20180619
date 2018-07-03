@@ -15,7 +15,7 @@ class NoteSearch extends Note
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'creator'], 'integer'],
@@ -62,7 +62,10 @@ class NoteSearch extends Note
             'id' => $this->id,
             'creator' => $this->creator,
             'date_create' => $this->date_create,
+			'access.user_id' => $params['user_id'] ?? ''
         ]);
+
+        $query->joinWith('access');
 
         $query->andFilterWhere(['like', 'text', $this->text]);
 

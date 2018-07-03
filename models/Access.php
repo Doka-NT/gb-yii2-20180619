@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use Yii;
+use app\models\query\AccessQuery;
 
 /**
  * This is the model class for table "access".
@@ -13,43 +13,47 @@ use Yii;
  */
 class Access extends \yii\db\ActiveRecord
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'access';
-    }
+	public const LEVEL_DENIED = 0;
+	public const LEVEL_VIEW = 1;
+	public const LEVEL_EDIT = 2;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['note_id', 'user_id'], 'required'],
-            [['note_id', 'user_id'], 'integer'],
-        ];
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function tableName(): string
+	{
+		return 'access';
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'note_id' => 'Note ID',
-            'user_id' => 'User ID',
-        ];
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function rules(): array
+	{
+		return [
+			[['note_id', 'user_id'], 'required'],
+			[['note_id', 'user_id'], 'integer'],
+		];
+	}
 
-    /**
-     * {@inheritdoc}
-     * @return \app\models\query\AccessQuery the active query used by this AR class.
-     */
-    public static function find()
-    {
-        return new \app\models\query\AccessQuery(get_called_class());
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function attributeLabels(): array
+	{
+		return [
+			'id' => 'ID',
+			'note_id' => 'Note ID',
+			'user_id' => 'User ID',
+		];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 * @return \app\models\query\AccessQuery the active query used by this AR class.
+	 */
+	public static function find(): AccessQuery
+	{
+		return new AccessQuery(__CLASS__);
+	}
 }

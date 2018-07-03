@@ -1,7 +1,9 @@
 <?php
 
+use app\models\Access;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\Note;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\search\NoteSearch */
@@ -23,14 +25,23 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+			[
+				'class' => 'yii\grid\SerialColumn',
+			],
 
             'id',
             'text:ntext',
-            'creator',
+			'author.name',
             'date_create',
 
-            ['class' => 'yii\grid\ActionColumn'],
+			[
+				'class' => 'yii\grid\ActionColumn',
+				'buttons' => [
+					'update' => function ($url, Note $model) {
+						return (new CheckNoteAccess)->execute($model) === Access::LEVEL_EDIT ? Html::a('Update', $url) : '';
+					},
+				],
+			],
         ],
     ]); ?>
 </div>

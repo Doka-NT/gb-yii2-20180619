@@ -2,10 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Access;
+use app\objects\CheckNoteAccess;
 use Yii;
 use app\models\Note;
 use app\models\search\NoteSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -20,6 +24,17 @@ class NoteController extends Controller
     public function behaviors()
     {
         return [
+			'access' => [
+				'class' => AccessControl::class,
+				'only' => ['my', 'create', 'update', 'delete', 'shared'],
+//				'except' => ['shared'],
+				'rules' => [
+					[
+						'roles' => ['@'],
+						'allow' => true,
+					],
+				],
+			],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -28,6 +43,44 @@ class NoteController extends Controller
             ],
         ];
     }
+
+	/**
+	 * @return string
+	 */
+	public function actionMy(): string
+	{
+		$searchModel = new NoteSearch();
+
+		$dataProvider = $searchModel->search(
+			[
+				'NoteSearch' => [
+					'creator' => \Yii::$app->user->id,
+				],
+			]
+		);
+
+		return $this->render(
+			'index',
+			[
+				'searchModel' => $searchModel,
+				'dataProvider' => $dataProvider,
+			]
+		);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function actionShared(): string
+	{
+		$searchModel = new NoteSearch();
+		$dataProvider = $searchModel->search(['user_id' => \Yii::$app->user->id]);
+
+		return $this->render('index', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+		]);
+	}
 
     /**
      * Lists all Note models.
@@ -44,16 +97,32 @@ class NoteController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Note model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+	/**
+	 * Displays a single Note model.
+	 *
+	 * @param integer $id
+	 *
+	 * @return mixed
+	 * @throws NotFoundHttpException if the model cannot be found
+	 * @throws ForbiddenHttpException
+	 */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+		$model = $this->findModel($id);
+		if (!$model) {
+			throw new NotFoundHttpException('Заметка не найдена');
+		}
+
+		$level = (new CheckNoteAccess)->execute($model);
+
+		if ($level === Access::LEVEL_DENIED) {
+			throw new ForbiddenHttpException('У вас нет доступа к этой заметке');
+		}
+
+		$viewName = $level === Access::LEVEL_EDIT ? 'view' : 'view-guest';
+
+		return $this->render($viewName, [
+            'model' => $model,
         ]);
     }
 

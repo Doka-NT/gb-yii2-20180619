@@ -15,7 +15,7 @@ class AccessSearch extends Access
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'note_id', 'user_id'], 'integer'],

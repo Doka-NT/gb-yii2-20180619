@@ -2,7 +2,8 @@
 
 namespace app\models;
 
-use Yii;
+use app\models\query\NoteQuery;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "note".
@@ -11,13 +12,16 @@ use Yii;
  * @property string $text
  * @property int $creator
  * @property string $date_create
+ *
+ * @property User $author
+ * @property Access[] $access
  */
 class Note extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'note';
     }
@@ -25,10 +29,10 @@ class Note extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['text', 'creator'], 'required'],
+            [['text'], 'required'],
             [['text'], 'string'],
             [['creator'], 'integer'],
             [['date_create'], 'safe'],
@@ -38,7 +42,7 @@ class Note extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -52,8 +56,39 @@ class Note extends \yii\db\ActiveRecord
      * {@inheritdoc}
      * @return \app\models\query\NoteQuery the active query used by this AR class.
      */
-    public static function find()
+    public static function find(): NoteQuery
     {
-        return new \app\models\query\NoteQuery(get_called_class());
+        return new NoteQuery(__CLASS__);
     }
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getAuthor(): ActiveQuery
+	{
+		return $this->hasOne(User::class, ['id' => 'creator']);
+	}
+
+	/**
+	 * @return ActiveQuery
+	 */
+	public function getAccess(): ActiveQuery
+	{
+		return $this->hasMany(Access::class, ['note_id' => 'id']);
+	}
+
+	public function beforeSave($insert)
+	{
+		$result = parent::beforeSave($insert);
+
+		if (!$this->creator) {
+			$this->creator = \Yii::$app->user->id;
+		}
+		if (!$this->date_create) {
+			$this->date_create = \date('Y-m-d H:i:s');
+		}
+
+		return $result;
+	}
+
 }
