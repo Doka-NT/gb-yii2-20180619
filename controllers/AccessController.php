@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\Access;
 use app\models\search\AccessSearch;
+use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * AccessController implements the CRUD actions for Access model.
@@ -52,8 +52,21 @@ class AccessController extends Controller
      */
     public function actionView($id)
     {
+//        $cache = \Yii::$app->cache;
+
+//        if ($cache->get('time') === false) {
+//
+//            $cache->set('time', time(), 10);
+//        }
+//
+//        \var_dump($cache->get('time'), time());
+//        exit;
+
+
+        $model = $this->findModel($id);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -118,7 +131,11 @@ class AccessController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Access::findOne($id)) !== null) {
+        if (($model = Access::find()
+                ->andWhere(['id' => $id])
+                ->cache(30)
+                ->one()
+            ) !== null) {
             return $model;
         }
 

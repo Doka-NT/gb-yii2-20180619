@@ -1,5 +1,7 @@
 <?php
 
+use yii\redis\Connection;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -19,7 +21,13 @@ $config = [
             'cookieValidationKey' => 'bq0uM4wdurjlj60SZJXhc85VCq943OMv',
         ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => \yii\redis\Cache::class,
+            'redis' => [
+                'class' => Connection::class,
+                'hostname' => '127.0.0.1',
+                'port' => 6379,
+                'database' => 0,
+            ],
         ],
         'user' => [
             'identityClass' => 'app\models\User',

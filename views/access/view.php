@@ -14,6 +14,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?php if ($this->beginCache('current_time_on_access_view', [
+        'duration' => 30,
+    ])): ?>
+
+        <?= date('Y-m-d H:i:s'); ?>
+        <?= $this->endCache(); ?>
+
+    <?php endif; ?>
+
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
