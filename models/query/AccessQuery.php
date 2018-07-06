@@ -56,4 +56,19 @@ class AccessQuery extends \yii\db\ActiveQuery
 
 		return $this;
     }
+
+    /**
+     * @return self
+     */
+    public function forCurrentDate(): self
+    {
+        $date = date('Y-m-d');
+        $this->andWhere([
+           'or',
+            ['<=', 'since', $date],
+            ['since' => null],
+        ]);
+
+        return $this;
+    }
 }

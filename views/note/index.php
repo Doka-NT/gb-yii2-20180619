@@ -1,9 +1,13 @@
 <?php
 
+use yii\grid\ActionColumn;
+use yii\grid\SerialColumn;
 use app\models\Access;
+use app\objects\CheckNoteAccess;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\Note;
+use yii\helpers\StringHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\search\NoteSearch */
@@ -26,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
 			[
-				'class' => 'yii\grid\SerialColumn',
+				'class' => SerialColumn::class,
 			],
 
             'id',
@@ -35,10 +39,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'date_create',
 
 			[
-				'class' => 'yii\grid\ActionColumn',
+				'class' => ActionColumn::class,
 				'buttons' => [
 					'update' => function ($url, Note $model) {
-						return (new CheckNoteAccess)->execute($model) === Access::LEVEL_EDIT ? Html::a('Update', $url) : '';
+						return (new CheckNoteAccess)->execute($model) === Access::LEVEL_EDIT
+							? Html::a('Update', $url)
+							: '';
 					},
 				],
 			],

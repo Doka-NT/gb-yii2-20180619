@@ -23,10 +23,12 @@ class CheckNoteAccess
 			return Access::LEVEL_EDIT;
 		}
 
-		$accessNote = Access::find()
+		$query = Access::find()
 			->forNote($model)
 			->forUserId($userId)
-			->one();
+            ->forCurrentDate();
+
+		$accessNote = $query->one();
 
 		if ($accessNote) {
 			return Access::LEVEL_VIEW;
