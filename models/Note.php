@@ -58,7 +58,7 @@ class Note extends \yii\db\ActiveRecord
      */
     public static function find(): NoteQuery
     {
-        return new NoteQuery(__CLASS__);
+        return new NoteQuery(static::class);
     }
 
 	/**

@@ -19,7 +19,7 @@ class NoteSearch extends Note
     {
         return [
             [['id', 'creator'], 'integer'],
-            [['text', 'date_create'], 'safe'],
+            [['text'], 'safe'],
         ];
     }
 

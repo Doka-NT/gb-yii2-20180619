@@ -1,12 +1,11 @@
 <?php
 
-use yii\grid\ActionColumn;
-use yii\grid\SerialColumn;
 use app\models\Access;
 use app\objects\CheckNoteAccess;
-use yii\helpers\Html;
+use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use app\models\Note;
+use yii\grid\SerialColumn;
+use yii\helpers\Html;
 use yii\helpers\StringHelper;
 
 /* @var $this yii\web\View */
@@ -32,21 +31,27 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'class' => SerialColumn::class,
 			],
+            [
+                'attribute' => 'text',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $text = StringHelper::truncateWords($model->text, 2, '', true);
 
-            'id',
-            'text:ntext',
+                    return Html::a($text, ['note/view', 'id' => $model->id]);
+                }
+            ],
 			'author.name',
-            'date_create',
-
+            [
+                'attribute' => 'date_create',
+                'format' => ['date', 'php:d.m.Y H:i'],
+            ],
 			[
 				'class' => ActionColumn::class,
-				'buttons' => [
-					'update' => function ($url, Note $model) {
-						return (new CheckNoteAccess)->execute($model) === Access::LEVEL_EDIT
-							? Html::a('Update', $url)
-							: '';
-					},
-				],
+                'visibleButtons' => [
+                    'update' => function ($model) {
+                        return (new CheckNoteAccess)->execute($model) === Access::LEVEL_EDIT;
+                    }
+                ],
 			],
         ],
     ]); ?>

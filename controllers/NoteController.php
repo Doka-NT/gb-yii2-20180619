@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Access;
+use app\models\form\NoteForm;
 use app\objects\CheckNoteAccess;
 use Yii;
 use app\models\Note;
@@ -133,7 +134,7 @@ class NoteController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Note();
+        $model = new NoteForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -187,7 +188,7 @@ class NoteController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Note::findOne($id)) !== null) {
+        if (($model = NoteForm::findOne($id)) !== null) {
             return $model;
         }
 

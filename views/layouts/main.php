@@ -38,16 +38,20 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'My', 'url' => ['/note/my']],
-            ['label' => 'Shared', 'url' => ['/note/shared']],
+            [
+                'label' => 'Заметки',
+                'items' => [
+                    ['label' => 'Мои', 'url' => ['/note/my']],
+                    ['label' => 'Доступные', 'url' => ['/note/shared']],
+                ],
+            ],
             Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
+            ['label' => 'Авторизация', 'url' => ['/site/login']]
             ) : (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
+                    'Выйти (' . Yii::$app->user->identity->username . ')',
                     ['class' => 'btn btn-link logout']
                 )
                 . Html::endForm()
