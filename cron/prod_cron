@@ -1,0 +1,2 @@
+# Скрипт будет выполняться каждые 15 минут.
+*/15 * * * * php /Users/artem/PhpstormProjects/gb-yii2/yii user-log/clean
